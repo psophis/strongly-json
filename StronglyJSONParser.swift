@@ -21,13 +21,13 @@ class JSONParser {
     let jsonString: String.CharacterView
     var lowerBound: String.Index
     var curIndex: String.Index
-    
+
     init(jsonString: String) {
         self.jsonString = jsonString.characters
         lowerBound = jsonString.startIndex
         curIndex = lowerBound
     }
-    
+
     private enum JSONNodeType {
         case rootNode, singleQuote, doubleQuote, array, object
         init?(startingCharacter character: Character) {
@@ -39,34 +39,34 @@ class JSONParser {
             default: return nil
             }
         }
-        
+
         var isQuotedString: Bool {
             return self == .singleQuote || self == .doubleQuote
         }
     }
-    
+
     func advanceLowerBound() {
         lowerBound = curIndex.successor()
     }
-    
+
     func parse() -> JSON {
         if jsonString.isAPlainString {
             return .JSONString(String(jsonString))
         }
         return parseAs(.rootNode)
     }
-    
+
     private func parseAs(node: JSONNodeType) -> JSON {
         // We want to start at the 2nd character of any node that has a parent
         if (node != .rootNode) {
             advanceLowerBound()
             curIndex = lowerBound
         }
-        
+
         let startedNodeAt = lowerBound
-        
+
         var tokens: [JSON] = []
-        
+
         func addTokenSinceLowerBound() {
             let chars = jsonString[lowerBound ..< curIndex].trimmed()
             if chars.count > 0 {
@@ -80,15 +80,15 @@ class JSONParser {
                 advanceLowerBound()
             }
         }
-        
+
         func addToken(token: JSON) {
             tokens.append(token)
             advanceLowerBound()
         }
-        
+
         while curIndex < jsonString.endIndex {
             let char = jsonString[curIndex]
-            
+
             switch char {
             case
             // Close any unclosed tokens, if appropriate
@@ -97,38 +97,38 @@ class JSONParser {
                 addTokenSinceLowerBound()
                 let str = tokens.map{$0.asString}.reduce("", combine: +)
                 return .JSONString(str)
-                
+
             case CloseSquareBracket where node == .array:
                 addTokenSinceLowerBound()
                 return .JSONArray(tokens)
-            
+
             case CloseCurlyBracket where node == .object:
                 addTokenSinceLowerBound()
                 return .JSONObject(tokens.toDict())
-            
+
             // Parse the contents of a new token
             case SingleQuote, DoubleQuote, OpenSquareBracket, OpenCurlyBracket:
                 // We already dealt with (possibly) closing brackets above
                 if (node == .singleQuote || node == .doubleQuote) { break }
                 let token = parseAs(JSONNodeType(startingCharacter: char)!)
                 addToken(token)
-                
+
             // Deal with separators
             case
             Separator where node == .object || node == .array,
             ValueDelimiter where node == .object:
                 addTokenSinceLowerBound()
-            
+
             // This is not a special case, wait until we find something that is
             default: break
             }
             curIndex = curIndex.successor()
         }
-        
+
         if node == .rootNode && tokens.count == 1 {
             return tokens[0]
         }
-        
+
         if tokens.count > 0 {
             print("\nNode type", node, "didn't get closed:")
             print(String(jsonString[startedNodeAt ..< curIndex]))
@@ -192,7 +192,7 @@ private extension String.CharacterView {
     var isAPlainString: Bool {return !self.isAnArray && !self.isAnObject}
     var isAnArray: Bool { return self.first == "[" && self.last == "]" }
     var isAnObject: Bool { return self.first == "{" && self.last == "}" }
-    
+
     func trimmed() -> String.CharacterView {
         var chars = self
         while chars.count > 0 {
@@ -204,7 +204,7 @@ private extension String.CharacterView {
                 break
             }
         }
-        
+
         return chars
     }
 }

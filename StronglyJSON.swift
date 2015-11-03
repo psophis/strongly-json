@@ -25,18 +25,18 @@ extension JSON {
         default: return nil
         }
     }
-    
+
     subscript(key: String) -> JSON? {
         switch self {
         case .JSONObject(let obj): return obj[key]
         default: return nil
         }
     }
-    
+
     public var asString: String {
         return self.description
     }
-    
+
     // This ensures the syntax gets correctly exported as serialised JSON
     // XXX: I have not tested this much yet, as the focus has been serializing input
     public var asJSONString: String {
@@ -45,14 +45,14 @@ extension JSON {
         default: return self.description
         }
     }
-    
+
     public var asInt: Int? {
         switch self {
         case .JSONInt(let int): return int
         default: return nil
         }
     }
-    
+
     public var asDouble: Double? {
         switch self {
         case .JSONInt(let int): return Double(int)
@@ -60,7 +60,7 @@ extension JSON {
         default: return nil
         }
     }
-    
+
     public var asBool: Bool {
         switch self {
         case .JSONBool(let bool): return bool
@@ -72,18 +72,18 @@ extension JSON {
         case .JSONNull: return false
         }
     }
-    
+
     public var asDict: [String: JSON]? {
         switch self {
         case .JSONObject(let dict): return dict
         default: return nil
         }
     }
-    
+
     public var isNull: Bool {
         return self == .JSONNull
     }
-    
+
 }
 
 
@@ -101,7 +101,7 @@ extension JSON : CustomStringConvertible, CustomDebugStringConvertible {
         case .JSONNull: return "null"
         }
     }
-    
+
     public var debugDescription: String {
         switch self {
         case let .JSONString(o): return o.debugDescription
@@ -122,11 +122,11 @@ extension JSON : StringLiteralConvertible {
     public init(stringLiteral string: String) {
         self = JSONParser(jsonString: string).parse()
     }
-    
+
     public init(extendedGraphemeClusterLiteral value: String) {
         self = JSON(stringLiteral: value)
     }
-    
+
     public init(unicodeScalarLiteral value: String) {
         self = JSON(stringLiteral: value)
     }
@@ -136,23 +136,23 @@ extension JSON : BooleanLiteralConvertible, IntegerLiteralConvertible, FloatLite
     public init(nilLiteral: ()) {
         self = .JSONNull
     }
-    
+
     public init(booleanLiteral value: Bool) {
         self = .JSONBool(value)
     }
-    
+
     public init(integerLiteral value: Int) {
         self = .JSONInt(value)
     }
-    
+
     public init(floatLiteral value: Double) {
         self = .JSONDouble(value)
     }
-    
+
     public init(arrayLiteral elements: JSON...) {
         self = .JSONArray(elements)
     }
-    
+
     public init(dictionaryLiteral pairs: (String, JSON)...) {
         self = .JSONObject([String: JSON](keyValuePairs: pairs))
     }
