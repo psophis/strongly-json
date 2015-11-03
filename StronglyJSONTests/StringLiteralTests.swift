@@ -16,17 +16,17 @@ class StringLiteralTests: XCTestCase {
 
     func testMakeJSONInt() {
         let json: JSON = 123
-        XCTAssert(json == .JSONInt(123))
+        XCTAssert(json == JSON(123))
     }
 
     func testMakeJSONDouble() {
         let json: JSON = 123.321
-        XCTAssert(json == .JSONDouble(123.321))
+        XCTAssert(json == JSON(123.321))
     }
 
     func testMakeJSONBool() {
         let json: JSON = true
-        XCTAssert(json == .JSONBool(true))
+        XCTAssert(json == JSON(true))
     }
 
     func testMakeJSONNull() {
@@ -36,7 +36,7 @@ class StringLiteralTests: XCTestCase {
 
     func testMakeJSONString() {
         let json: JSON = "here's a string, make of it what you will"
-        XCTAssert(json == .JSONString("here's a string, make of it what you will"))
+        XCTAssert(json == JSON("here's a string, make of it what you will"))
     }
 
     func testMakeJSONArray() {
@@ -44,7 +44,7 @@ class StringLiteralTests: XCTestCase {
         let parser = JSONParser(jsonString: string)
         let json = parser.parse()
 
-        XCTAssert(json == .JSONArray([true, 123, 123.456]), json.debugDescription)
+        XCTAssert(json == JSON([true, 123, 123.456]), json.debugDescription)
     }
 
     func testMakeJSONObject() {
@@ -52,7 +52,7 @@ class StringLiteralTests: XCTestCase {
         let parser = JSONParser(jsonString: string)
         let json = parser.parse()
 
-        let literal: JSON = .JSONObject([
+        let literal: JSON = JSON([
             "anInteger" : 123,
             "aFloatValue" : 123.456
         ])

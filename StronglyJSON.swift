@@ -158,6 +158,36 @@ extension JSON : BooleanLiteralConvertible, IntegerLiteralConvertible, FloatLite
     }
 }
 
+extension JSON {
+    init(_ string: String) {
+        self.init(stringLiteral: string)
+    }
+
+    init(_ double: Double) {
+        self.init(floatLiteral: double)
+    }
+
+    init(_ int: Int) {
+        self.init(integerLiteral: int)
+    }
+
+    init(_ bool: Bool) {
+        self.init(booleanLiteral: bool)
+    }
+
+    init(_ array: [JSON]) {
+        self = .JSONArray(array)
+    }
+
+    init(_ object: [String: JSON]) {
+        self = .JSONObject(object)
+    }
+
+    init(_ nilLiteral: ()) {
+        self = .JSONNull
+    }
+}
+
 private extension Dictionary {
     init(keyValuePairs: [(Key, Value)]) {
         self.init()
